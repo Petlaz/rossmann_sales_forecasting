@@ -1,17 +1,37 @@
-black
-flake8
-ipython
-isort
-jupyterlab
-loguru
-matplotlib
-notebook
-numpy
-pandas
-pip
-pytest
-python-dotenv
-scikit-learn
-tqdm
-typer
--e .
+# Core Data Science Stack (minimum versions) - base.txt
+# This file is used to manage dependencies for a data science project.
+joblib>=1.2.0
+pandas>=2.0.0
+numpy>=1.22.0
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+gradio>=4.0.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+scipy>=1.10.0
+
+# Development Tools (minimum versions) - dev.txt
+# This file is used to manage development dependencies for a data science project.
+flake>=0.8.0
+black>=23.0
+ipython>=8.0
+loguru>=0.6.0
+plotly>=5.0
+pytest>=7.0
+tqdm>=4.65.0
+jupyterlab>=4.0
+pydantic>=2.0
+kaleido>=0.2
+typer>=0.9.0
+
+# Steps to run: python3 -m pip install -r requirements.txt
+# To check installed versions: python3 -m pip list
+# If you get conflicts, try: python3 -m pip install --use-feature=2020-resolver -r requirements.txt
+# To install a specific package: python3 -m pip install package_name
+# To update packages: python3 -m pip install --upgrade -r requirements.txt
+# To freeze current environment: python3 -m pip freeze > requirements.txt
+# To install a specific version: python3 -m pip install package_name==version
+# To install the latest version: python3 -m pip install package_name --upgrade
+# To uninstall a package: python3 -m pip uninstall package_name
+# To check for outdated packages: python3 -m pip list --outdated
+
