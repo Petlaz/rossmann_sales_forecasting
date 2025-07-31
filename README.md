@@ -1,4 +1,4 @@
-# rossmann store sales forecasting
+# rossmann sales forecasting
 
 <a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
@@ -39,7 +39,7 @@ Forecasting daily sales for 1,100+ Rossmann stores using machine learning and mo
 │
 ├── setup.cfg          <- Configuration file for flake8
 │
-└── rossmann-sales-forecasting   <- Source code for use in this project.
+└── rossmann_sales_forecasting   <- Source code for use in this project.
     │
     ├── __init__.py             <- Makes rossmann-sales-forecasting a Python module
     │
