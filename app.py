@@ -2,18 +2,16 @@
 import gradio as gr
 import pandas as pd
 import joblib
-import os
 
 # Load model
-MODEL_PATH = os.path.join("models", "random_forest.pkl")
+MODEL_PATH = "models/random_forest.pkl"
 model = joblib.load(MODEL_PATH)
 
 # Load feature names from processed CSV
-FEATURES_PATH = "/Users/peter/rossmann_sales_forecasting/data/processed/X_encoded.csv"
+FEATURES_PATH = "data/processed/X_encoded.csv"
 feature_names = pd.read_csv(FEATURES_PATH, nrows=0).columns.tolist()
 
 def predict_sales(store, promo, school_holiday, day_of_week, month, year):
-    # Create a dictionary for all features, fill unused with 0
     input_dict = {feat: 0 for feat in feature_names}
     input_dict.update({
         "Store": store,
@@ -44,5 +42,3 @@ iface = gr.Interface(
 
 if __name__ == "__main__":
     iface.launch()
-    
-# To run the app, use the command: python3 rossmann_sales_forecasting/app.py
