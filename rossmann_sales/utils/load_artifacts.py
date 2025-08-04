@@ -1,9 +1,12 @@
 # rossmann_sales/utils/load_artifacts.py
+
+from pathlib import Path
 import joblib
 import json
-from pathlib import Path
 
-MODEL_DIR = Path(__file__).parent.parent / "models"
+# Go up three levels from this file's location to reach project root
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+MODEL_DIR = PROJECT_ROOT / "models"
 
 def load_model():
     model_path = MODEL_DIR / "random_forest.pkl"
@@ -22,6 +25,4 @@ def load_feature_names():
     if not features_path.exists():
         raise FileNotFoundError(f"Features file not found at {features_path}")
     with open(features_path, "r") as f:
-        features = json.load(f)
-    return features
-
+        return json.load(f)
