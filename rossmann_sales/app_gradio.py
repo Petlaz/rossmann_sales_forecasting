@@ -1,26 +1,13 @@
-import os
-import gdown
 import gradio as gr
 import pandas as pd
-from pathlib import Path
-
 from rossmann_sales.utils.load_artifacts import load_model, load_scaler, load_feature_names
 
-# 🔽 Download model from Google Drive if missing
-MODEL_PATH = Path("models/random_forest.pkl")
-GDRIVE_FILE_ID = "1zVNpAIysnyQ_tmHIQjRTt2y2mnI6CMpV"
-GDRIVE_URL = f"https://drive.google.com/uc?id={GDRIVE_FILE_ID}"
-os.makedirs("models", exist_ok=True)
-if not MODEL_PATH.exists():
-    print("Downloading model from Google Drive...")
-    gdown.download(GDRIVE_URL, str(MODEL_PATH), quiet=False)
-
-# 🔁 Load model artifacts
+# Load artifacts (model, scaler, features)
 model = load_model()
 scaler = load_scaler()
 features = load_feature_names()
 
-# 🔢 Categorical options
+# Categorical options for dropdowns
 store_types = ["a", "b", "c", "d"]
 state_holiday_options = ["0", "a", "b", "c"]
 assortment_types = ["a", "b", "c"]
@@ -28,6 +15,7 @@ promo_interval_options = ["Jan,Apr,Jul,Oct", "Mar,Jun,Sept,Dec", "None"]
 
 def create_input_dict(inputs):
     input_dict = {feat: 0 for feat in features}
+
     numeric_feats = [
         "Store", "DayOfWeek", "Open", "Promo", "SchoolHoliday",
         "CompetitionDistance", "CompetitionOpenSinceMonth", "CompetitionOpenSinceYear",
@@ -40,6 +28,7 @@ def create_input_dict(inputs):
         if feat in inputs:
             input_dict[feat] = inputs[feat]
 
+    # One-hot encode categorical features
     input_dict[f"StoreType_{inputs.get('StoreType', 'a')}"] = 1
     input_dict[f"StateHoliday_{inputs.get('StateHoliday', '0')}"] = 1
     if f"Assortment_{inputs['Assortment']}" in input_dict:
@@ -92,6 +81,7 @@ def predict_sales(
     prediction = model.predict(X_scaled)[0]
     return f"Predicted Sales: €{prediction:,.2f}"
 
+# Example preset input values
 example_presets = {
     "Store": 1,
     "DayOfWeek": 5,
