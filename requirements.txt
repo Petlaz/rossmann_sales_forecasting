@@ -1,5 +1,3 @@
-# Core Data Science Stack (minimum versions) - base.txt
-# This file is used to manage dependencies for a data science project.
 joblib>=1.5.1
 pandas>=2.2.2
 numpy>=1.26.4
@@ -9,7 +7,6 @@ gradio>=4.0
 matplotlib>=3.9.0
 seaborn>=0.12.2
 scipy>=1.11.4
-json>=2.0.9
 
 # Optional: your dev tools at the bottom
 black>=24.4.2
