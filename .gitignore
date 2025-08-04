@@ -192,3 +192,4 @@ cython_debug/
 *.pyc
 *.pkl
 *.ipynb_checkpoints/
+*.models/random_forest.pkl
