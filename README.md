@@ -1,23 +1,53 @@
----
-title: Rossmann Sales Forecasting
-emoji: 🏪
-colorFrom: blue
-colorTo: green
-sdk: gradio
-sdk_version: "4.44.1"
-app_file: app.py
-pinned: false
----
+# 🏪 Rossmann Sales Forecasting
 
-# rossmann_sales_forecasting
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![ML](https://img.shields.io/badge/Machine-Learning-orange)
+![Gradio](https://img.shields.io/badge/UI-Gradio-ff9a00?logo=gradio&logoColor=white)
 
-<a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
-    <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
-</a>
+Rossmann Sales Forecasting is a machine learning project that predicts daily sales for over 1,100 Rossmann drug stores across Europe. Leveraging historical sales data, promotions, holidays, and store-specific features, the project applies feature engineering and advanced regression models to deliver accurate forecasts with real business value.
 
-Rossmann Store Sales Forecasting is a time series machine learning project that predicts daily sales for over 1,000 Rossmann drug stores using historical sales data, promotions, holidays, and store-specific features. The project leverages advanced regression models and feature engineering, and includes an interactive Gradio app for real-time sales prediction.
+Key Features
 
-## Project Organization
+- **Time Series Forecasting**: Predicts daily sales using historical patterns
+- **Feature Engineering**: Creates meaningful temporal and promotional features
+- **Multiple Model Evaluation**: Tests various regression approaches
+- **Production-Ready**: Includes Gradio web interface for easy predictions
+- **Interpretable Results**: Provides feature importance and error analysis
+
+Model Performance
+
+Final Model Evaluation
+| Metric | Value |
+|--------|-------|
+| RMSE   | 847.47 |
+| MAE    | 568.17 |
+| MAPE   | 8.88% |
+
+Best Performing Model
+After evaluating several regression models, **Random Forest Regressor** emerged as the top performer:
+
+| Model              | RMSE    | MAE     | MAPE   |
+|--------------------|---------|---------|--------|
+| Random Forest      | 597.35  | 339.47  | 6.33%  |
+| Gradient Boosting  | 1042.84 | 677.56  | 12.42% |
+| Ridge Regression   | 1566.57 | 1084.93 | 17.99% |
+| XGBoost            | 6721.08 | 5674.55 | 98.08% |
+
+Insights
+
+Top Predictive Features
+
+1. Promo
+2. Store
+3. DayOfWeek
+4. CompetitionDistance
+5. SchoolHoliday
+
+These insights inform store-level strategies for staffing, inventory, and promotions.
+
+
+Project Structure
 
 ```
 ├── LICENSE            <- Open-source license if one is chosen
@@ -68,18 +98,67 @@ Rossmann Store Sales Forecasting is a time series machine learning project that 
     └── plots.py                <- Code to create visualizations
 ```
 
---------
-title: Rossmann Sales Forecasting
-emoji: 🏃
-colorFrom: yellow
-colorTo: pink
-sdk: gradio
-sdk_version: 5.39.0
-app_file: app.py
-pinned: false
-license: mit
-short_description: machine learning project that predicts daily sales.
----
+Quick start
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+**Installation**:  
+1. Clone the repository:
+```bash
+git clone https://github.com/Petlaz/rossmann_sales_forecasting.git
+cd rossmann_sales_forecasting
+
+2. Install dependencies:
+
+pip install -r requirements.txt
+
+3. Run the Gradio web app:
+
+python -m rossmann_sales.app_gradio
+
+ 
+ Dataset
+
+Source: Kaggle - Rossmann Store Sales
+
+Key Features:
+
+* Store Info: Store, StoreType, Assortment, CompetitionDistance
+
+* Temporal Features: Date, DayOfWeek, PromoInterval
+
+* Promotions: Promo, Promo2, Promo2SinceWeek
+
+* Calendar Events: SchoolHoliday, StateHoliday
+
+* Engineered Features: Lag features, time components
+
+* Target Variable: Sales
+
+Roadmap
+
+* EDA and preprocessing
+
+* Feature engineering
+
+* Model selection and tuning
+
+* Evaluation and diagnostics
+
+* Gradio-based prediction UI
+
+* Model monitoring with real-time data
+
+
+Contacts
+
+👤 Peter Ugonna Obi
+📧 Email: peter.obi96@yahoo.com
+🔗 LinkedIn: linkedin.com/in/peter-obi-15a424161
+
+
+License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+
+
 
