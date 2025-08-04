@@ -1,12 +1,26 @@
-# rossmann_sales/app_gradio.py
+import os
+import gdown
 import gradio as gr
 import pandas as pd
+from pathlib import Path
+
 from rossmann_sales.utils.load_artifacts import load_model, load_scaler, load_feature_names
 
+# 🔽 Download model from Google Drive if missing
+MODEL_PATH = Path("models/random_forest.pkl")
+GDRIVE_FILE_ID = "1zVNpAIysnyQ_tmHIQjRTt2y2mnI6CMpV"
+GDRIVE_URL = f"https://drive.google.com/uc?id={GDRIVE_FILE_ID}"
+os.makedirs("models", exist_ok=True)
+if not MODEL_PATH.exists():
+    print("Downloading model from Google Drive...")
+    gdown.download(GDRIVE_URL, str(MODEL_PATH), quiet=False)
+
+# 🔁 Load model artifacts
 model = load_model()
 scaler = load_scaler()
 features = load_feature_names()
 
+# 🔢 Categorical options
 store_types = ["a", "b", "c", "d"]
 state_holiday_options = ["0", "a", "b", "c"]
 assortment_types = ["a", "b", "c"]
@@ -26,239 +40,157 @@ def create_input_dict(inputs):
         if feat in inputs:
             input_dict[feat] = inputs[feat]
 
-    store_type = inputs.get("StoreType", "a")
-    input_dict[f"StoreType_{store_type}"] = 1
-
-    state_holiday = inputs.get("StateHoliday", "0")
-    input_dict[f"StateHoliday_{state_holiday}"] = 1
-
-    assortment = inputs.get("Assortment", "a")
-    if f"Assortment_{assortment}" in input_dict:
-        input_dict[f"Assortment_{assortment}"] = 1
-
-    promo_interval = inputs.get("PromoInterval", "None")
-    if f"PromoInterval_{promo_interval}" in input_dict:
-        input_dict[f"PromoInterval_{promo_interval}"] = 1
+    input_dict[f"StoreType_{inputs.get('StoreType', 'a')}"] = 1
+    input_dict[f"StateHoliday_{inputs.get('StateHoliday', '0')}"] = 1
+    if f"Assortment_{inputs['Assortment']}" in input_dict:
+        input_dict[f"Assortment_{inputs['Assortment']}"] = 1
+    if f"PromoInterval_{inputs['PromoInterval']}" in input_dict:
+        input_dict[f"PromoInterval_{inputs['PromoInterval']}"] = 1
 
     return input_dict
 
 def predict_sales(
     Store, DayOfWeek, Open, Promo, SchoolHoliday,
+    StoreType, Assortment, StateHoliday, PromoInterval,
     CompetitionDistance, CompetitionOpenSinceMonth, CompetitionOpenSinceYear,
-    Promo2, Promo2SinceWeek, Promo2SinceYear, CompetitionOpen,
-    Year, Month, Day, WeekOfYear, IsWeekend,
+    Promo2, Promo2SinceWeek, Promo2SinceYear,
+    CompetitionOpen, Year, Month, Day, WeekOfYear, IsWeekend,
     Sales_lag_1, Sales_lag_7, Sales_lag_14,
-    Sales_roll_mean_7, Sales_roll_mean_14,
-    StoreType, StateHoliday, Assortment, PromoInterval
+    Sales_roll_mean_7, Sales_roll_mean_14
 ):
-    try:
-        inputs = dict(
-            Store=Store,
-            DayOfWeek=DayOfWeek,
-            Open=Open,
-            Promo=Promo,
-            SchoolHoliday=SchoolHoliday,
-            CompetitionDistance=CompetitionDistance,
-            CompetitionOpenSinceMonth=CompetitionOpenSinceMonth,
-            CompetitionOpenSinceYear=CompetitionOpenSinceYear,
-            Promo2=Promo2,
-            Promo2SinceWeek=Promo2SinceWeek,
-            Promo2SinceYear=Promo2SinceYear,
-            CompetitionOpen=CompetitionOpen,
-            Year=Year,
-            Month=Month,
-            Day=Day,
-            WeekOfYear=WeekOfYear,
-            IsWeekend=IsWeekend,
-            Sales_lag_1=Sales_lag_1,
-            Sales_lag_7=Sales_lag_7,
-            Sales_lag_14=Sales_lag_14,
-            Sales_roll_mean_7=Sales_roll_mean_7,
-            Sales_roll_mean_14=Sales_roll_mean_14,
-            StoreType=StoreType,
-            StateHoliday=StateHoliday,
-            Assortment=Assortment,
-            PromoInterval=PromoInterval,
-        )
+    input_data = {
+        "Store": Store,
+        "DayOfWeek": DayOfWeek,
+        "Open": Open,
+        "Promo": Promo,
+        "SchoolHoliday": SchoolHoliday,
+        "StoreType": StoreType,
+        "Assortment": Assortment,
+        "StateHoliday": StateHoliday,
+        "PromoInterval": PromoInterval,
+        "CompetitionDistance": CompetitionDistance,
+        "CompetitionOpenSinceMonth": CompetitionOpenSinceMonth,
+        "CompetitionOpenSinceYear": CompetitionOpenSinceYear,
+        "Promo2": Promo2,
+        "Promo2SinceWeek": Promo2SinceWeek,
+        "Promo2SinceYear": Promo2SinceYear,
+        "CompetitionOpen": CompetitionOpen,
+        "Year": Year,
+        "Month": Month,
+        "Day": Day,
+        "WeekOfYear": WeekOfYear,
+        "IsWeekend": IsWeekend,
+        "Sales_lag_1": Sales_lag_1,
+        "Sales_lag_7": Sales_lag_7,
+        "Sales_lag_14": Sales_lag_14,
+        "Sales_roll_mean_7": Sales_roll_mean_7,
+        "Sales_roll_mean_14": Sales_roll_mean_14
+    }
 
-        input_dict = create_input_dict(inputs)
-        input_df = pd.DataFrame([input_dict])
-        input_df = input_df.reindex(columns=features, fill_value=0)
-        input_scaled = scaler.transform(input_df)
-        prediction = model.predict(input_scaled)
-
-        return f"💰 Predicted Sales: €{prediction[0]:,.2f}"
-    except Exception as e:
-        return f"❌ Error: {e}"
+    X = pd.DataFrame([create_input_dict(input_data)])
+    X_scaled = scaler.transform(X)
+    prediction = model.predict(X_scaled)[0]
+    return f"Predicted Sales: €{prediction:,.2f}"
 
 example_presets = {
-    "Typical Store": {
-        "Store": 1,
-        "DayOfWeek": 4,
-        "Open": 1,
-        "Promo": 1,
-        "SchoolHoliday": 0,
-        "CompetitionDistance": 500,
-        "CompetitionOpenSinceMonth": 9,
-        "CompetitionOpenSinceYear": 2010,
-        "Promo2": 1,
-        "Promo2SinceWeek": 20,
-        "Promo2SinceYear": 2011,
-        "CompetitionOpen": 1000,
-        "Year": 2015,
-        "Month": 6,
-        "Day": 15,
-        "WeekOfYear": 24,
-        "IsWeekend": 0,
-        "Sales_lag_1": 6000,
-        "Sales_lag_7": 6200,
-        "Sales_lag_14": 6300,
-        "Sales_roll_mean_7": 6100,
-        "Sales_roll_mean_14": 6150,
-        "StoreType": "c",
-        "StateHoliday": "0",
-        "Assortment": "c",
-        "PromoInterval": "None",
-    },
-    "Holiday Season": {
-        "Store": 5,
-        "DayOfWeek": 6,
-        "Open": 1,
-        "Promo": 0,
-        "SchoolHoliday": 1,
-        "CompetitionDistance": 300,
-        "CompetitionOpenSinceMonth": 5,
-        "CompetitionOpenSinceYear": 2012,
-        "Promo2": 0,
-        "Promo2SinceWeek": 0,
-        "Promo2SinceYear": 0,
-        "CompetitionOpen": 800,
-        "Year": 2015,
-        "Month": 12,
-        "Day": 24,
-        "WeekOfYear": 52,
-        "IsWeekend": 1,
-        "Sales_lag_1": 8000,
-        "Sales_lag_7": 8500,
-        "Sales_lag_14": 8700,
-        "Sales_roll_mean_7": 8300,
-        "Sales_roll_mean_14": 8400,
-        "StoreType": "b",
-        "StateHoliday": "a",
-        "Assortment": "b",
-        "PromoInterval": "Jan,Apr,Jul,Oct",
-    }
+    "Store": 1,
+    "DayOfWeek": 5,
+    "Open": 1,
+    "Promo": 1,
+    "SchoolHoliday": 0,
+    "StoreType": "a",
+    "Assortment": "a",
+    "StateHoliday": "0",
+    "PromoInterval": "Jan,Apr,Jul,Oct",
+    "CompetitionDistance": 200.0,
+    "CompetitionOpenSinceMonth": 9,
+    "CompetitionOpenSinceYear": 2008,
+    "Promo2": 1,
+    "Promo2SinceWeek": 14,
+    "Promo2SinceYear": 2011,
+    "CompetitionOpen": 24,
+    "Year": 2015,
+    "Month": 6,
+    "Day": 19,
+    "WeekOfYear": 25,
+    "IsWeekend": 0,
+    "Sales_lag_1": 5500,
+    "Sales_lag_7": 5400,
+    "Sales_lag_14": 5300,
+    "Sales_roll_mean_7": 5200,
+    "Sales_roll_mean_14": 5100
 }
 
-with gr.Blocks() as demo:
-    gr.Markdown("# 📈 Rossmann Sales Forecaster")
+def load_preset_values():
+    return tuple(example_presets[key] for key in example_presets)
+
+with gr.Blocks(title="Rossmann Sales Forecasting") as demo:
+    gr.Markdown("## 🏪 Rossmann Sales Forecasting App")
+    gr.Markdown("Use this app to predict future sales for a Rossmann store based on store data and promotional events.")
 
     with gr.Row():
         with gr.Column():
-            Store = gr.Number(label="Store", value=1, precision=0, info="Store ID")
-            DayOfWeek = gr.Slider(1, 7, step=1, label="Day of Week", value=4, info="Day of week (1=Mon, 7=Sun)")
-            Open = gr.Radio([0,1], label="Open", value=1, info="Is store open (0=closed, 1=open)")
-            Promo = gr.Radio([0,1], label="Promo", value=1, info="Is a promotion active?")
-            SchoolHoliday = gr.Radio([0,1], label="School Holiday", value=0, info="Is it a school holiday?")
-            CompetitionDistance = gr.Number(label="Competition Distance", value=500, info="Distance to nearest competitor (meters)")
-            CompetitionOpenSinceMonth = gr.Slider(1, 12, step=1, label="Competition Open Since Month", value=9, info="Month when competitor opened")
-            CompetitionOpenSinceYear = gr.Number(label="Competition Open Since Year", value=2010, precision=0, info="Year when competitor opened")
-            Promo2 = gr.Radio([0,1], label="Promo2", value=1, info="Is store participating in Promo2?")
-            Promo2SinceWeek = gr.Slider(1, 52, step=1, label="Promo2 Since Week", value=20, info="Week when Promo2 started")
-            Promo2SinceYear = gr.Number(label="Promo2 Since Year", value=2011, precision=0, info="Year when Promo2 started")
-            CompetitionOpen = gr.Number(label="Competition Open", value=1000, info="Days competitor has been open")
+            Store = gr.Number(value=1, label="Store ID", info="Unique ID for the store")
+            DayOfWeek = gr.Slider(1, 7, value=5, step=1, label="Day of Week", info="1=Monday, 7=Sunday")
+            Open = gr.Radio([0, 1], value=1, label="Open")
+            Promo = gr.Radio([0, 1], value=1, label="Promo")
+            SchoolHoliday = gr.Radio([0, 1], value=0, label="School Holiday")
+            StoreType = gr.Dropdown(store_types, value="a", label="Store Type")
+            Assortment = gr.Dropdown(assortment_types, value="a", label="Assortment Type")
+            StateHoliday = gr.Dropdown(state_holiday_options, value="0", label="State Holiday")
+            PromoInterval = gr.Dropdown(promo_interval_options, value="Jan,Apr,Jul,Oct", label="Promo Interval")
 
         with gr.Column():
-            Year = gr.Number(label="Year", value=2015, precision=0, info="Year of prediction")
-            Month = gr.Slider(1, 12, step=1, label="Month", value=6, info="Month of prediction")
-            Day = gr.Slider(1, 31, step=1, label="Day", value=15, info="Day of prediction")
-            WeekOfYear = gr.Slider(1, 52, step=1, label="Week Of Year", value=24, info="Week number of year")
-            IsWeekend = gr.Radio([0,1], label="Is Weekend", value=0, info="Is it a weekend day?")
-            Sales_lag_1 = gr.Number(label="Sales lag 1", value=6000, info="Sales 1 day ago")
-            Sales_lag_7 = gr.Number(label="Sales lag 7", value=6200, info="Sales 7 days ago")
-            Sales_lag_14 = gr.Number(label="Sales lag 14", value=6300, info="Sales 14 days ago")
-            Sales_roll_mean_7 = gr.Number(label="Sales roll mean 7", value=6100, info="7-day rolling mean sales")
-            Sales_roll_mean_14 = gr.Number(label="Sales roll mean 14", value=6150, info="14-day rolling mean sales")
-            StoreType = gr.Dropdown(store_types, label="Store Type", value="c", info="Store type category")
-            StateHoliday = gr.Dropdown(state_holiday_options, label="State Holiday", value="0", info="Type of state holiday")
-            Assortment = gr.Dropdown(assortment_types, label="Assortment", value="c", info="Store assortment type")
-            PromoInterval = gr.Dropdown(promo_interval_options, label="Promo Interval", value="None", info="Promotion interval")
+            CompetitionDistance = gr.Number(value=200.0, label="Competition Distance (m)")
+            CompetitionOpenSinceMonth = gr.Slider(1, 12, value=9, step=1, label="Competition Open Month")
+            CompetitionOpenSinceYear = gr.Slider(2000, 2015, value=2008, step=1, label="Competition Open Year")
+            Promo2 = gr.Radio([0, 1], value=1, label="Promo2")
+            Promo2SinceWeek = gr.Slider(1, 52, value=14, step=1, label="Promo2 Since Week")
+            Promo2SinceYear = gr.Slider(2000, 2015, value=2011, step=1, label="Promo2 Since Year")
+            CompetitionOpen = gr.Number(value=24, label="Competition Open (Months)")
+            Year = gr.Slider(2013, 2015, value=2015, step=1, label="Year")
+            Month = gr.Slider(1, 12, value=6, step=1, label="Month")
+            Day = gr.Slider(1, 31, value=19, step=1, label="Day")
+            WeekOfYear = gr.Slider(1, 52, value=25, step=1, label="Week of Year")
+            IsWeekend = gr.Radio([0, 1], value=0, label="Is Weekend")
+            Sales_lag_1 = gr.Number(value=5500, label="Sales Lag 1 Day")
+            Sales_lag_7 = gr.Number(value=5400, label="Sales Lag 7 Days")
+            Sales_lag_14 = gr.Number(value=5300, label="Sales Lag 14 Days")
+            Sales_roll_mean_7 = gr.Number(value=5200, label="7-Day Rolling Sales Mean")
+            Sales_roll_mean_14 = gr.Number(value=5100, label="14-Day Rolling Sales Mean")
 
     with gr.Row():
-        preset = gr.Dropdown(list(example_presets.keys()), label="Load Example Preset", value=None)
-        load_btn = gr.Button("Load Preset")
+        predict_btn = gr.Button("Predict Sales")
+        result_output = gr.Textbox(label="Prediction", lines=1)
 
-    predict_btn = gr.Button("Predict Sales")
-    output = gr.Textbox(label="Prediction")
-
-    def load_preset_values(preset_name):
-        if preset_name and preset_name in example_presets:
-            preset = example_presets[preset_name]
-            return [
-                preset.get("Store", 0),
-                preset.get("DayOfWeek", 0),
-                preset.get("Open", 0),
-                preset.get("Promo", 0),
-                preset.get("SchoolHoliday", 0),
-                preset.get("CompetitionDistance", 0),
-                preset.get("CompetitionOpenSinceMonth", 0),
-                preset.get("CompetitionOpenSinceYear", 0),
-                preset.get("Promo2", 0),
-                preset.get("Promo2SinceWeek", 0),
-                preset.get("Promo2SinceYear", 0),
-                preset.get("CompetitionOpen", 0),
-                preset.get("Year", 0),
-                preset.get("Month", 0),
-                preset.get("Day", 0),
-                preset.get("WeekOfYear", 0),
-                preset.get("IsWeekend", 0),
-                preset.get("Sales_lag_1", 0),
-                preset.get("Sales_lag_7", 0),
-                preset.get("Sales_lag_14", 0),
-                preset.get("Sales_roll_mean_7", 0),
-                preset.get("Sales_roll_mean_14", 0),
-                str(preset.get("StoreType", "a")),
-                str(preset.get("StateHoliday", "0")),
-                str(preset.get("Assortment", "a")),
-                str(preset.get("PromoInterval", "None")),
-            ]
-        else:
-            return [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                "a", "0", "a", "None"
-            ]
-
-    load_btn.click(
-        fn=load_preset_values,
-        inputs=preset,
-        outputs=[
+    predict_btn.click(
+        predict_sales,
+        inputs=[
             Store, DayOfWeek, Open, Promo, SchoolHoliday,
+            StoreType, Assortment, StateHoliday, PromoInterval,
             CompetitionDistance, CompetitionOpenSinceMonth, CompetitionOpenSinceYear,
-            Promo2, Promo2SinceWeek, Promo2SinceYear, CompetitionOpen,
-            Year, Month, Day, WeekOfYear, IsWeekend,
+            Promo2, Promo2SinceWeek, Promo2SinceYear,
+            CompetitionOpen, Year, Month, Day, WeekOfYear, IsWeekend,
             Sales_lag_1, Sales_lag_7, Sales_lag_14,
-            Sales_roll_mean_7, Sales_roll_mean_14,
-            StoreType, StateHoliday, Assortment, PromoInterval
+            Sales_roll_mean_7, Sales_roll_mean_14
+        ],
+        outputs=result_output
+    )
+
+    gr.Button("Use Example Data").click(
+        lambda: load_preset_values(), outputs=[
+            Store, DayOfWeek, Open, Promo, SchoolHoliday,
+            StoreType, Assortment, StateHoliday, PromoInterval,
+            CompetitionDistance, CompetitionOpenSinceMonth, CompetitionOpenSinceYear,
+            Promo2, Promo2SinceWeek, Promo2SinceYear,
+            CompetitionOpen, Year, Month, Day, WeekOfYear, IsWeekend,
+            Sales_lag_1, Sales_lag_7, Sales_lag_14,
+            Sales_roll_mean_7, Sales_roll_mean_14
         ]
     )
 
-    predict_btn.click(
-        fn=predict_sales,
-        inputs=[
-            Store, DayOfWeek, Open, Promo, SchoolHoliday,
-            CompetitionDistance, CompetitionOpenSinceMonth, CompetitionOpenSinceYear,
-            Promo2, Promo2SinceWeek, Promo2SinceYear, CompetitionOpen,
-            Year, Month, Day, WeekOfYear, IsWeekend,
-            Sales_lag_1, Sales_lag_7, Sales_lag_14,
-            Sales_roll_mean_7, Sales_roll_mean_14,
-            StoreType, StateHoliday, Assortment, PromoInterval
-        ],
-        outputs=output
-    )
-
-if __name__ == "__main__":
+def launch_app():
     demo.launch()
 
-# Run this script to start the Gradio app: python -m rossmann_sales.app_gradio
-
-
+if __name__ == "__main__":
+    launch_app()
