@@ -1,3 +1,13 @@
+---
+title: Rossmann Sales Forecasting
+emoji: 🏪
+colorFrom: blue
+colorTo: green
+sdk: gradio
+sdk_version: "4.44.1"
+app_file: app.py
+pinned: false
+---
 
 # rossmann_sales_forecasting
 
