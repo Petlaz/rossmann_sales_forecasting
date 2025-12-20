@@ -1,12 +1,12 @@
 # Data
 /data/
 
-# Models (large files)
-/models/
+# Model artifacts (large files)
 *.pkl
 *.joblib
 *.h5
 *.model
+*.weights
 
 # Mac OS-specific storage files
 .DS_Store
