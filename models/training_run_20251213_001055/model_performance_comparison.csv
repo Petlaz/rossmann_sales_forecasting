@@ -1,0 +1,9 @@
+Model,Family,R² (%),RMSE,MAE,MAPE (%)
+Xgboost,Boosting,74.07,1560,1123,17.3
+Random Forest,Ensemble,59.54,1948,1393,21.16
+Decision Tree,Tree-based,49.9,2168,1534,23.23
+Ridge,Linear Models,26.43,2627,1921,31.26
+Linear Regression,Linear Models,26.03,2634,1927,31.44
+Elastic Net,Linear Models,25.76,2639,1927,31.43
+Lasso,Linear Models,25.5,2643,1919,30.95
+Svm Rbf,SVM,17.36,2784,1926,28.77

@@ -1,0 +1,205 @@
+{
+  "evaluation_date": "2025-12-13T07:52:15.012490",
+  "phase": "Phase 4 - Model Evaluation Complete",
+  "performance_summary": [
+    {
+      "rmse": 1559.6683942428276,
+      "mae": 1123.3358154296875,
+      "mape": 17.302268477896117,
+      "r2": 0.7406506538391113,
+      "Model": "Xgboost",
+      "Model_Type": "xgboost",
+      "Family": "Boosting"
+    },
+    {
+      "rmse": 1948.0312897503754,
+      "mae": 1392.8996802097745,
+      "mape": 21.157243951927143,
+      "r2": 0.5954125098592731,
+      "Model": "Random Forest",
+      "Model_Type": "random_forest",
+      "Family": "Ensemble"
+    },
+    {
+      "rmse": 2167.7273060285743,
+      "mae": 1533.6948567871375,
+      "mape": 23.232351145418434,
+      "r2": 0.4990090391923254,
+      "Model": "Decision Tree",
+      "Model_Type": "decision_tree",
+      "Family": "Tree-based"
+    },
+    {
+      "rmse": 2626.914194511647,
+      "mae": 1921.28399582631,
+      "mape": 31.263581630934585,
+      "r2": 0.2642803289160558,
+      "Model": "Ridge",
+      "Model_Type": "ridge",
+      "Family": "Linear Models"
+    },
+    {
+      "rmse": 2634.071179902188,
+      "mae": 1926.9112569574995,
+      "mape": 31.44102440894555,
+      "r2": 0.26026595503126004,
+      "Model": "Linear Regression",
+      "Model_Type": "linear_regression",
+      "Family": "Linear Models"
+    },
+    {
+      "rmse": 2638.7302760845873,
+      "mae": 1927.1848535498568,
+      "mape": 31.427895039035096,
+      "r2": 0.2576467850279571,
+      "Model": "Elastic Net",
+      "Model_Type": "elastic_net",
+      "Family": "Linear Models"
+    },
+    {
+      "rmse": 2643.440311026916,
+      "mae": 1919.2937096501112,
+      "mape": 30.95471494034857,
+      "r2": 0.2549942743236522,
+      "Model": "Lasso",
+      "Model_Type": "lasso",
+      "Family": "Linear Models"
+    },
+    {
+      "rmse": 2784.041976101099,
+      "mae": 1925.7820216366151,
+      "mape": 28.772377111403586,
+      "r2": 0.17363454928467192,
+      "Model": "Svm Rbf",
+      "Model_Type": "svm_rbf",
+      "Family": "SVM"
+    }
+  ],
+  "cross_validation_results": {
+    "xgboost": {
+      "scores": "[0.75560142 0.73655207 0.76013066 0.7863909  0.7336754 ]",
+      "mean": 0.7544700892297527,
+      "std": 0.019003864622953448,
+      "min": 0.7336753987582999,
+      "max": 0.7863908956922407
+    },
+    "random_forest": {
+      "scores": "[0.58603452 0.65856851 0.62609739 0.57662102 0.6171024 ]",
+      "mean": 0.6128847699628971,
+      "std": 0.029378090912400658,
+      "min": 0.576621024562602,
+      "max": 0.6585685126202957
+    },
+    "decision_tree": {
+      "scores": "[0.47119494 0.47105621 0.51351774 0.38420319 0.39550493]",
+      "mean": 0.4470954009761498,
+      "std": 0.04936363522589695,
+      "min": 0.3842031853205321,
+      "max": 0.513517736293962
+    },
+    "ridge": {
+      "scores": "[0.219317   0.18327351 0.28943979 0.19165807 0.1513157 ]",
+      "mean": 0.20700081449861402,
+      "std": 0.04657700866641646,
+      "min": 0.15131570389317664,
+      "max": 0.2894397866076219
+    }
+  },
+  "statistical_significance": [
+    {
+      "comparison": "xgboost vs random_forest",
+      "mean_diff": 0.14158531926685558,
+      "t_statistic": 6.281852555647709,
+      "p_value": 0.0032792477317312697,
+      "cohens_d": 5.722735154895433,
+      "significance": "**",
+      "effect_size": "Large"
+    },
+    {
+      "comparison": "xgboost vs decision_tree",
+      "mean_diff": 0.30737468825360287,
+      "t_statistic": 10.897599894671378,
+      "p_value": 0.0004025621737752283,
+      "cohens_d": 8.217993877851287,
+      "significance": "***",
+      "effect_size": "Large"
+    },
+    {
+      "comparison": "xgboost vs ridge",
+      "mean_diff": 0.5474692747311387,
+      "t_statistic": 25.113062842583318,
+      "p_value": 1.4927103877192936e-05,
+      "cohens_d": 15.390971486328583,
+      "significance": "***",
+      "effect_size": "Large"
+    }
+  ],
+  "business_impact": [
+    {
+      "model": "Xgboost",
+      "mape": 17.302268477896117,
+      "r2": 0.7406506538391113,
+      "efficiency_gain": 1.3488657610519414,
+      "annual_revenue_impact": 37967689.4249781,
+      "staff_efficiency": 11.10975980758667,
+      "inventory_improvement": 6.61581852176831
+    },
+    {
+      "model": "Random Forest",
+      "mape": 21.157243951927143,
+      "r2": 0.5954125098592731,
+      "efficiency_gain": 0.0,
+      "annual_revenue_impact": 0.0,
+      "staff_efficiency": 8.931187647889097,
+      "inventory_improvement": 6.307420483845829
+    },
+    {
+      "model": "Decision Tree",
+      "mape": 23.232351145418434,
+      "r2": 0.4990090391923254,
+      "efficiency_gain": 0.0,
+      "annual_revenue_impact": 0.0,
+      "staff_efficiency": 7.485135587884882,
+      "inventory_improvement": 6.141411908366525
+    }
+  ],
+  "decision_framework": {
+    "criteria_weights": {
+      "accuracy": 0.3,
+      "stability": 0.2,
+      "interpretability": 0.15,
+      "efficiency": 0.15,
+      "business_impact": 0.2
+    },
+    "model_scores": {
+      "xgboost": {
+        "accuracy": 10,
+        "stability": 8,
+        "interpretability": 7,
+        "efficiency": 9,
+        "business_impact": 10
+      },
+      "random_forest": {
+        "accuracy": 7,
+        "stability": 9,
+        "interpretability": 9,
+        "efficiency": 7,
+        "business_impact": 7
+      },
+      "decision_tree": {
+        "accuracy": 5,
+        "stability": 6,
+        "interpretability": 10,
+        "efficiency": 10,
+        "business_impact": 5
+      }
+    },
+    "final_scores": {
+      "xgboost": 9.0,
+      "random_forest": 7.7,
+      "decision_tree": 6.7
+    },
+    "recommended_model": "xgboost",
+    "backup_model": "random_forest"
+  }
+}
