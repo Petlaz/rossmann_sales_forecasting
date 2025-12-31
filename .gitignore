@@ -1,5 +1,36 @@
-# Data
+# Data and large files
 /data/
+*.csv
+*.parquet
+*.feather
+*.arrow
+*.hdf5
+*.xlsx
+*.xls
+*.zip
+*.tar.gz
+*.7z
+
+# Large notebook outputs
+*.ipynb_checkpoints/
+*-checkpoint.ipynb
+**/outputs/
+**/figures/
+**/plots/
+
+# Gradio temporary files
+gradio_cached_examples/
+flagged/
+gradio_temp/
+
+# MLflow and experiment tracking
+mlruns/
+mlflow_outputs/
+experiments/
+runs/
+wandb/
+tensorboard_logs/
+logs/
 
 # Model artifacts (large files)
 *.pkl
@@ -7,9 +38,52 @@
 *.h5
 *.model
 *.weights
+*.bin
+*.safetensors
+*.onnx
+*.tflite
+*.pt
+*.pth
+
+# Training artifacts
+models/
+training_run_*/
+checkpoints/
+artifacts/
+experiments/
+mlruns/
+wandb/
 
 # Mac OS-specific storage files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# System and temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Deployment and runtime files
+.env.local
+.env.production
+.env.staging
+app.log
+runtime.log
+*.pid
+*.sock
 
 # vim
 *.swp

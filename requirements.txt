@@ -10,6 +10,9 @@ jupyter>=1.0.0
 # Advanced ML Libraries
 xgboost>=1.7.0
 joblib>=1.3.0
+scipy>=1.10.0
+shap>=0.42.0
+lime>=0.2.0
 
 # Development Tools
 loguru
@@ -19,4 +22,9 @@ python-dotenv
 ruff
 tqdm
 typer
+
+# Deployment & Web Framework
+gradio>=4.0.0
+
+# Project installation
 -e .
